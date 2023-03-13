@@ -1,0 +1,11 @@
+#lang racket
+(define (new.< x y)(< x y))
+(define (new.> x y)(> x y))
+(define (new.= x y)(= x y))
+(define (new.<= x y)(<= x y))
+(define (new.>= x y)(>= x y))
+(define (new.<> x y)(not (= x y)))
+
+(new.> 3 1)
+(new.<= 33 33)
+(new.<> 3 1)

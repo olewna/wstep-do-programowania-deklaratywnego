@@ -1,0 +1,8 @@
+#lang racket
+(define (odd? n) (=(modulo n 2)1))
+(odd? 2137)
+(odd? 666)
+
+(define (even? n) (=(modulo n 2)0))
+(even? 420)
+(even? 69)

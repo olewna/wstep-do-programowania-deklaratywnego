@@ -1,0 +1,53 @@
+#lang racket
+
+(define (constant? exp) (number? exp))
+(define (variable? exp) (symbol? exp))
+(define (same-variable? x y)
+  (and (variable? x)
+       (variable? y)
+       (eq? x y)))
+(define (sum? exp)
+  (if (not (atom? exp))
+      (eq? (car exp) `+)
+      (error "blad")))
+(define (product? exp)
+  (if (not (atom? exp))
+      (eq? (car exp) '*)
+      (error "blad")))
+(define (exponential? exp)
+    (if (not (atom? exp))
+      (eq? (car exp) '^)
+      (error "blad")))
+(define (addend sum) (cadr sum))
+(define (augend sum) (caddr sum))
+(define (make-sum a b) (list `+ a b))
+(define (make-product a b) (list `* a b))
+(define (atom? x) (not (or (pair? x) (null? x))))
+(define (make-exponent a b)
+  (cond ((eq? b 0) 1)
+        ((eq? b 1) a)
+        (#t (list '^ a (make-sum b -1)))))
+
+
+(define (deriv exp var)
+  (cond ((constant? exp) 0)
+        ((variable? exp)
+         (if (same-variable? exp var) 1 0))
+        ((sum? exp)
+         (make-sum
+          (deriv (addend exp) var)
+          (deriv (augend exp) var)))
+        ((product? exp)
+         (make-sum
+          (make-product (addend exp) (deriv (augend exp) var))
+          (make-product (augend exp) (deriv (addend exp) var))))
+        ((exponential? exp)
+         (make-product
+          (addend exp)
+          (make-product
+           (make-exponent (addend exp) (augend exp))
+           (deriv (addend exp) var)
+        )))))
+
+(deriv `(* x y) `x)
+(deriv `(+ (* a x) b) `x)
